@@ -1,17 +1,24 @@
 import datetime
 import os
+import appDirectories
 from pynput.keyboard import Key, Controller, Listener 
 
+cwd = os.getcwd()
+        
+#Dont forget to add delete option for both notes and notebooks
+
 class Notebook:
-    def __init__(self, notebookNum):
-        self.notebookNum = 1
+    """The instance of the class creates the folder in cwd to store user's notes"""
+
+    notebook_id = 1
+    directory = appDirectories.notebooks_dir
+    
+    def __init__(self):
+        # Create new folder in the Notebooks directory
+        os.mkdir(f'{Notebook.directory}\\Notebook{Notebook.notebook_id}')
+
         self.notes = []
         self.note_id = 0
-        self.cwd = os.getcwd()                        #Dont forget to add delete option for both notes and notebooks
-
-    def createNotebook(self):
-        os.mkdir(f'{self.cwd}\Notebook{self.notebookNum}')
-        print(f"Your notebook is created in {self.cwd}")
 
 
     def addNote(self, noteName=""):
@@ -48,6 +55,14 @@ class Note:
                 break
         note.write("\n".join(content))
         note.close()
+
+
+def createNotebooksFolder():
+    try:
+        os.mkdir(f"{cwd}\\Notebooks")
+    except FileExistsError:
+        pass
+
 
 
 
