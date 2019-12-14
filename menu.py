@@ -1,4 +1,7 @@
+import os
+import appDirectories
 import notebook
+from notebook import Notebook, Note
 
 
 
@@ -27,6 +30,9 @@ class Menu:
             if action: action()
             else: print(f"{choice} is invalid choice")
 
+    def mainMenu(self):
+        MainMenu().run()
+
 ###
 class MainMenu(Menu):
     def __init__(self):
@@ -35,7 +41,8 @@ class MainMenu(Menu):
             "2": self.reminder,             # 2. Reminder 
             "3": self.toDo,                 # 3. To-Do 
             "4": self.goals,                # 4. Goals 
-            "5": self.activities,           # 5. Activities 
+            "5": self.activities, 
+            "6": self.quit,          # 5. Activities 
         }
     
     def notes(self):
@@ -48,8 +55,20 @@ class MainMenu(Menu):
         GoalsMenu().run()
     def activities(self):
         ActivitiesMenu().run()
+    
+    def quit(self):
+        print("Are you sure you want to quit? [y/n]")
+        choice = input()
+        if choice.lower() == 'y':
+            print("""Thank you for using this app
+                Have a productive day""")
+            quit()
+        else: pass
 
 
+
+
+###
 class NotesMenu(Menu):    
     def __init__(self):
         self.menuOptions = {
@@ -57,24 +76,43 @@ class NotesMenu(Menu):
             "2": self.createNewNotebook,
             "3": self.addNewNote,
             "4": self.findANote,
+            "5": self.mainMenu,
         }
     
     def showMyNotebooks(self):
-        pass
+        os.chdir(appDirectories.notebooks_dir)
+
+        # The list of folders in Notebooks folder:
+        notebooks = [i.name for i in os.scandir(os.getcwd()) if i.is_dir()]
+
+        if not notebooks:
+            print("You don't have any notebooks yet")
+        else:
+            print("\nYour notebooks:\n")
+            for num, name in enumerate(notebooks, 1):
+                print(f'{num}. {name}' )
+        print("\n")
+
+
     def createNewNotebook(self):
-        pass
+        Notebook()       
+        Notebook.notebook_id += 1 
+
     def addNewNote(self):
-        notebook.Notebook.addNote()
+        pass
+        # Notebook.addNote()
     def findANote(self):
         pass
 
 
+###
 class ReminderMenu(Menu):
     def __init__(self):
         self.menuOptions = {
             "1": self.setSingleReminder,
             "2": self.setRepeatedReminder,
-            "3": self.setQuestionForYourself
+            "3": self.setQuestionForYourself,
+            "4": self.mainMenu,
         }
     
     def setSingleReminder(self):
@@ -85,11 +123,13 @@ class ReminderMenu(Menu):
         pass
 
 
+###
 class ToDoMenu(Menu):
     def __init__(self):
         self.menuOptions = {
             "1": self.showMyToDo,
-            "2": self.createToDoList
+            "2": self.createToDoList,
+            "3": self.mainMenu,
         }
 
     def showMyToDo(self):
@@ -103,12 +143,14 @@ class ToDoMenu(Menu):
         2: Create a to-do list
         ''')
 
+###
 class GoalsMenu(Menu):
     def __init__(self):
         self.menuOptions = {
             "1": self.showMyGoals,
             "2": self.addNewGoal,
-            "3": self.addAListOfGoals
+            "3": self.addAListOfGoals,
+            "4": self.mainMenu,
         }
 
     def showMyGoals(self):
@@ -119,14 +161,17 @@ class GoalsMenu(Menu):
         pass
 
 
+###
 class ActivitiesMenu(Menu):
     def __init__(self):
         self.menuOptions = {
+            "4": self.mainMenu,
 
         }
 
 
 if __name__ == "__main__":
+    appDirectories.run()
     MainMenu().run()
     
 
