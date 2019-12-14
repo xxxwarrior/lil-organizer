@@ -1,0 +1,30 @@
+Organizer
+
+Notes
+Reminders
+Goals
+Goals Progress
+Set Questions
+TO-DO Lists
+Activities Check
+
+***//You can write simple usual text notes.
+You can tag, edit, delete and search them.
+
+***//You can set the Reminder for a certain datetime.
+You can set some reminders every day, i.e. to take pills
+You can set Set Questions, these are like Remainders but you type the answer, i.e. "What do you feel?" or smth
+
+***//You can create list(s) of Goals for a certain period of time.
+You can simply describe each goal, or you can split them into the smaller ones. 
+You can mark them as achieved, edit, delete, add or edit description.
+
+***//You can create to-do list for a day or a week.
+You can add or delete items, mark them as completed, describe each task.
+*Maybe generate jpeg with to-do in addition to the app 
+
+***//You can create a list of activities you want to do with a certain frequency, i.e. "read 50 pages of a book every day"
+You can mark as completed for today/this week, add activities, delete, modify activity/frequency.
+You can set the Reminder for the activities.
+
+
