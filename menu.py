@@ -1,7 +1,6 @@
 import os
 import appDirectories
-import notebook
-from notebook import Notebook, Note
+from notebook import Note
 
 
 
@@ -16,13 +15,16 @@ class Menu:
 
         For example showMyNotes() will be displayed as
         1. Show My Notes
+
         """
 
+        print("\n")
         for num, func in enumerate(self.menuOptions.values(), 1):
             name = "".join([" "+i if i.isupper() else i for i in func.__name__])
             print(f'{num}: {name.title()}')
+        print("\n")
 
-    def run(self):
+    def run(self):    #stop=False
         while True: 
             self.displayMenu()
             choice = input("Enter a menu number: ")
@@ -30,19 +32,28 @@ class Menu:
             if action: action()
             else: print(f"{choice} is invalid choice")
 
-    def mainMenu(self):
-        MainMenu().run()
+    def quit(self):
+        print("Are you sure you want to quit? [y/n]")
+        choice = input()
+        if 'y' in choice.lower():
+            print("""Thank you for using this app
+                Have a productive day""")
+            quit()
+        else: pass
+
+    def mainMenu(self):    # This isn't right
+        MainMenu().run()   # This isn't right AT ALL
 
 ###
 class MainMenu(Menu):
     def __init__(self):
         self.menuOptions = {
-            "1": self.notes,                # 1. Notes 
-            "2": self.reminder,             # 2. Reminder 
-            "3": self.toDo,                 # 3. To-Do 
-            "4": self.goals,                # 4. Goals 
-            "5": self.activities, 
-            "6": self.quit,          # 5. Activities 
+            "1": self.notes,                 
+            "2": self.reminder,              
+            "3": self.toDo,                  
+            "4": self.goals,                 
+            "5": self.activities,           
+            "6": self.quit,           
         }
     
     def notes(self):
@@ -56,14 +67,6 @@ class MainMenu(Menu):
     def activities(self):
         ActivitiesMenu().run()
     
-    def quit(self):
-        print("Are you sure you want to quit? [y/n]")
-        choice = input()
-        if choice.lower() == 'y':
-            print("""Thank you for using this app
-                Have a productive day""")
-            quit()
-        else: pass
 
 
 
@@ -72,37 +75,63 @@ class MainMenu(Menu):
 class NotesMenu(Menu):    
     def __init__(self):
         self.menuOptions = {
-            "1": self.showMyNotebooks,
-            "2": self.createNewNotebook,
-            "3": self.addNewNote,
-            "4": self.findANote,
-            "5": self.mainMenu,
+            "1": self.addNewNote,
+            "2": self.findANote,
+            "3": self.mainMenu,
+            "4": self.quit,
         }
-    
-    def showMyNotebooks(self):
-        os.chdir(appDirectories.notebooks_dir)
+        os.chdir(appDirectories.notes_dir)
+        self.notes = [i for i in os.scandir(appDirectories.notes_dir) if i. is_file()]
+        self.note_id = 0
 
-        # The list of folders in Notebooks folder:
-        notebooks = [i.name for i in os.scandir(os.getcwd()) if i.is_dir()]
-
-        if not notebooks:
-            print("You don't have any notebooks yet")
-        else:
-            print("\nYour notebooks:\n")
-            for num, name in enumerate(notebooks, 1):
-                print(f'{num}. {name}' )
+    def displayMenu(self):        
+        print("\n")
+        if not self.notes:
+            print("You don't have any notes yet")
+        else: 
+            print("\nYour notes:\n")
+            for num, note in enumerate(self.notes, 1):
+                print(f'{num}. {note.name}')
         print("\n")
 
-
-    def createNewNotebook(self):
-        Notebook()       
-        Notebook.notebook_id += 1 
+        for num, func in enumerate(self.menuOptions.values(), 1):
+            name = "".join([" "+i if i.isupper() else i for i in func.__name__])
+            print(f'{num}: {name.title()}')
+        print("\n")
+                 
 
     def addNewNote(self):
-        pass
-        # Notebook.addNote()
+        self.note_id += 1
+        name = input("Name your note or press Enter\n")
+        if not name: name = f"Note{self.note_id}"
+        else:
+            import re
+            reg = re.compile("[^a-zA-Z][^0-9]")
+            name = reg.sub('', name)
+        tags = input("Add some tags or press enter\n")
+        note = Note(self.note_id, name, tags.split())
+        try:
+            note.create()
+        except FileExistsError:
+            print(f"Note '{name}' already exists")  
+
+
+
     def findANote(self):
-        pass
+        keyword = input("Enter the keyword:\n")
+        if not keyword:
+            print("You haven't entered anything")
+        else:
+            match = []
+            for entry in self.notes:
+                with open(f'{entry.name}', "r") as note:
+                    if keyword in note.read() or keyword in entry.name: 
+                        match.append(note.name)
+            if match: 
+                print(f"There is '{keyword}' in {', '.join(note for note in match)}")
+            else: print(f"There are no notes with '{keyword}' in it")
+            
+        
 
 
 ###
@@ -168,6 +197,8 @@ class ActivitiesMenu(Menu):
             "4": self.mainMenu,
 
         }
+
+
 
 
 if __name__ == "__main__":
