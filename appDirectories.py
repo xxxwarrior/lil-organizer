@@ -9,8 +9,16 @@ import os
 
 # The directory which this file is in 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-cwd = os.getcwd()
 root = f"{dir_path}\\RootFolder"
+
+# The paths of all the app folders
+notes_dir = f"{root}\\Notes"
+reminders_dir = f"{root}\\Reminders"
+todos_dir =  f"{root}\\ToDos"
+goals_dir = f"{root}\\Goals"
+activities_dir = f"{root}\\Activities"
+
+
 
 
 def run():
@@ -21,7 +29,7 @@ def run():
         pass
     
     try:
-        os.mkdir(f"{root}\\Notebooks")
+        os.mkdir(f"{root}\\Notes")
         os.mkdir(f"{root}\\Reminders")
         os.mkdir(f"{root}\\ToDos")
         os.mkdir(f"{root}\\Goals")
@@ -29,10 +37,5 @@ def run():
     except FileExistsError:
         pass
             
-# The paths of all the app folders
-notebooks_dir = f"{root}\\Notebooks"
-reminders_dir = f"{root}\\Reminders"
-todos_dir =  f"{root}\\ToDos"
-goals_dir = f"{root}\\Goals"
-activities_dir = f"{root}\\Activities"
+
 
