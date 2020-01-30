@@ -1,6 +1,10 @@
 import os
 import appDirectories
 from notebook import Note
+from datetime import datetime
+from notification import Notification
+from multiprocessing import Process 
+from todo import ToDo
 
 
 
@@ -20,7 +24,7 @@ class Menu:
 
         print("\n")
         for num, func in enumerate(self.menuOptions.values(), 1):
-            name = "".join([" "+i if i.isupper() else i for i in func.__name__])
+            name = "".join([" "+ i if i.isupper() else i for i in func.__name__])
             print(f'{num}: {name.title()}')
         print("\n")
 
@@ -93,11 +97,8 @@ class NotesMenu(Menu):
             for num, note in enumerate(self.notes, 1):
                 print(f'{num}. {note.name}')
         print("\n")
+        super().displayMenu()
 
-        for num, func in enumerate(self.menuOptions.values(), 1):
-            name = "".join([" "+i if i.isupper() else i for i in func.__name__])
-            print(f'{num}: {name.title()}')
-        print("\n")
                  
 
     def addNewNote(self):
@@ -105,7 +106,7 @@ class NotesMenu(Menu):
         name = input("Name your note or press Enter\n")
         if not name: name = f"Note{self.note_id}"
         else:
-            import re
+            import re # To avoid invalid input 
             reg = re.compile("[^a-zA-Z][^0-9]")
             name = reg.sub('', name)
         tags = input("Add some tags or press enter\n")
@@ -126,13 +127,12 @@ class NotesMenu(Menu):
             for entry in self.notes:
                 with open(f'{entry.name}', "r") as note:
                     if keyword in note.read() or keyword in entry.name: 
-                        match.append(note.name)
+                        match.append(entry.name)
             if match: 
                 print(f"There is '{keyword}' in {', '.join(note for note in match)}")
             else: print(f"There are no notes with '{keyword}' in it")
             
         
-
 
 ###
 class ReminderMenu(Menu):
@@ -140,16 +140,28 @@ class ReminderMenu(Menu):
         self.menuOptions = {
             "1": self.setSingleReminder,
             "2": self.setRepeatedReminder,
-            "3": self.setQuestionForYourself,
-            "4": self.mainMenu,
+            "3": self.mainMenu,
         }
     
     def setSingleReminder(self):
-        pass
+        message = input("Enter the reminder message: ")        
+        date = datetime.today().strftime("%Y.%m.%d,")
+        done = False
+        while not done:
+            try:
+                time = input("\nSet the time, for example '12:30'\n") 
+                dateObj = datetime.strptime(date+time, '%Y.%m.%d,%H:%M')
+                n = Notification(message=message, when=dateObj)
+                process = Process(target=n.activate)
+                process.start()
+                done = True
+            except ValueError:
+                print("The time format is invalid, try again")
+        print("Your reminder was set successfully")
+
     def setRepeatedReminder(self):
-        pass
-    def setQuestionForYourself(self):
-        pass
+        print("Let's encourage your memory couse there's no such functionality here")
+        print("hehe")
 
 
 ###
@@ -160,17 +172,35 @@ class ToDoMenu(Menu):
             "2": self.createToDoList,
             "3": self.mainMenu,
         }
+        
+        os.chdir(appDirectories.todos_dir)
+
 
     def showMyToDo(self):
-        pass
+        date = datetime.today().strftime("%d.%m.%y")
+        todos = [i for i in os.listdir(appDirectories.todos_dir)]
+        if todos != []:
+            for i in todos:
+                if date in i:
+                    f = open(i, "r")
+                    print("\n", f.read(), sep="")
+                    f.close()
+        else: print("There are no to-dos for today")
+             
+
     def createToDoList(self):
-        pass
+        inp = input("""If you already have to-do list for today, 
+        this action will rewrite it. Continue? [y/n]\n""")
+        if "y" in inp:
+            ToDo().create()
 
     def displayMenu(self):
         print('''
-        1: Show my to-do's
-        2: Create a to-do list
+1. Show my to-do for today
+2. Create new to-do list
+3. Main Menu
         ''')
+
 
 ###
 class GoalsMenu(Menu):
@@ -194,9 +224,17 @@ class GoalsMenu(Menu):
 class ActivitiesMenu(Menu):
     def __init__(self):
         self.menuOptions = {
+            "1": self.addNewActivity,
+
             "4": self.mainMenu,
 
         }
+    def displayMenu(self):
+        print("""\nIn this section you can keep track of your activities\n
+            such as reading or meditation on everyday basis""")
+        super().displayMenu()
+
+    
 
 
 
