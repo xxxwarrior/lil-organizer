@@ -1,7 +1,6 @@
 from plyer import notification 
 from playsound import playsound 
 from datetime import datetime 
-
 import time
 
 class Notification:
@@ -14,10 +13,10 @@ class Notification:
         time.sleep(self.time)
         notification.notify(title=self.title,
                             message=self.message,
-                            app_icon=None,  # add something here
+                            app_icon="icon.ico", 
                             timeout=10,
                             )  
-        playsound("C:\\inflicted.wav")
+        playsound("toasty.wav")
 
 
 
