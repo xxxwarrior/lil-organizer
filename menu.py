@@ -113,19 +113,6 @@ class NotesMenu(Menu):
             for num, note in enumerate(self.notes, 1):
                 print(f'{num}. {note.name}')
         super().displayMenu()
-
-    
-    def openNote(self):
-        choice = input("\nEnter the note number: ")
-        for num, note in enumerate(self.notes, 1):
-            if choice == str(num):
-                print("\033[37;1m", f"The note '{note.name}':")
-                f = open(note, "r")
-                print("\n", f.read(), sep="")
-                f.close()
-                print(self.color)
-                break
-            else: pass
                  
 
     def addNewNote(self):
@@ -149,6 +136,19 @@ class NotesMenu(Menu):
             note.create()
         except FileExistsError:
             print(f"Note '{name}' already exists")  
+            
+            
+    def openNote(self):
+        choice = input("\nEnter the note number: ")
+        for num, note in enumerate(self.notes, 1):
+            if choice == str(num):
+                print("\033[37;1m", f"The note '{note.name}':")
+                f = open(note, "r")
+                print("\n", f.read(), sep="")
+                f.close()
+                print(self.color)
+                break
+            else: pass
 
 
 
@@ -198,7 +198,7 @@ class ReminderMenu(Menu):
 
     def setRepeatedReminder(self):
         print('\033[31;42;2m') # red text & green bg
-        print("Let's encourage your memory couse there's no such functionality here")
+        print("Let's encourage your memory cause there's no such functionality here")
         print("hehe")
 
 
@@ -263,8 +263,3 @@ class ActivitiesMenu(Menu):
 if __name__ == "__main__":
     appDirectories.run()
     MainMenu().run()
-    
-
-
-
-
