@@ -5,7 +5,7 @@ from datetime import datetime
 
 import appDirectories
 from todo import ToDo
-from notebook import Note
+from note import Note
 from notification import Notification
 
 colorama.init()
@@ -93,18 +93,19 @@ class NotesMenu(Menu):
     def __init__(self):
         self.menuOptions = {
             "1": self.addNewNote,
-            "2": self.findANote,
-            "3": self.mainMenu,
-            "4": self.quit,
+            "2": self.openNote,
+            "3": self.findANote,
+            "4": self.mainMenu,
+            "5": self.quit,
         }
-        self.color = "\033[35;1m" # bright magenta
+        self.color = "\033[35;40;1m" # bright magenta
         os.chdir(appDirectories.notes_dir)
         self.notes = [i for i in os.scandir(appDirectories.notes_dir) if i.is_file()]
         self.note_id = 0 
 
 
     def displayMenu(self):        
-        print(self.color, "\n")
+        print("\033[30;47;2m")
         if not self.notes:
             print("You don't have any notes yet")
         else: 
@@ -113,6 +114,18 @@ class NotesMenu(Menu):
                 print(f'{num}. {note.name}')
         super().displayMenu()
 
+    
+    def openNote(self):
+        choice = input("\nEnter the note number: ")
+        for num, note in enumerate(self.notes, 1):
+            if choice == str(num):
+                print("\033[37;1m", f"The note '{note.name}':")
+                f = open(note, "r")
+                print("\n", f.read(), sep="")
+                f.close()
+                print(self.color)
+                break
+            else: pass
                  
 
     def addNewNote(self):
