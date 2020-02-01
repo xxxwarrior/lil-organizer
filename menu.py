@@ -1,16 +1,20 @@
 import os
-import appDirectories
-from notebook import Note
+import re 
+import colorama
 from datetime import datetime
-from notification import Notification
-from multiprocessing import Process 
+
+import appDirectories
 from todo import ToDo
+from notebook import Note
+from notification import Notification
 
-
+colorama.init()
+color = "\033[36;49;1m" # bright cyan 
 
 class Menu:    
     def __init__(self):
          self.menuOptions = {}
+         self.color = color
     
     def displayMenu(self):
         """ 
@@ -21,29 +25,41 @@ class Menu:
         1. Show My Notes
 
         """
-
         print("\n")
+        print(self.color)
         for num, func in enumerate(self.menuOptions.values(), 1):
             name = "".join([" "+ i if i.isupper() else i for i in func.__name__])
             print(f'{num}: {name.title()}')
         print("\n")
 
-    def run(self):    #stop=False
+    def run(self):
         while True: 
             self.displayMenu()
             choice = input("Enter a menu number: ")
             action = self.menuOptions.get(choice)
             if action: action()
-            else: print(f"{choice} is invalid choice")
+            else: print(f"'{choice}' is invalid choice")
+
 
     def quit(self):
-        print("Are you sure you want to quit? [y/n]")
-        choice = input()
-        if 'y' in choice.lower():
-            print("""Thank you for using this app
-                Have a productive day""")
+        # Maybe one day you'll figure out the way to do it more elegant 
+
+        string = ' ' * 37 
+        print("\033[41;1m", string) # red bg     
+        print("\033[42;1m", string) # green bg        
+        print("\033[43;1m", string, end='') # yellow bg 
+        print("\033[37;45;1m") # white text & magenta bg 
+
+        choice = input("Are you sure you want to quit? [y/n] ")
+        print("\033[45;1m", string)
+        if 'y' in choice.lower():  
+            print("""Thank you for using this app          
+        Have a productive day!        """)
+            print("\033[41;1m", string)
+            print("\033[42;1m", string)
+            print("\033[43;1m", string)
             quit()
-        else: pass
+        print(color)
 
     def mainMenu(self):    # This isn't right
         MainMenu().run()   # This isn't right AT ALL
@@ -54,11 +70,11 @@ class MainMenu(Menu):
         self.menuOptions = {
             "1": self.notes,                 
             "2": self.reminder,              
-            "3": self.toDo,                  
-            "4": self.goals,                 
-            "5": self.activities,           
-            "6": self.quit,           
+            "3": self.toDo,                                  
+            "4": self.activities,           
+            "5": self.quit,           
         }
+        self.color = color
     
     def notes(self):
         NotesMenu().run()
@@ -66,12 +82,9 @@ class MainMenu(Menu):
         ReminderMenu().run()
     def toDo(self):
         ToDoMenu().run()
-    def goals(self):
-        GoalsMenu().run()
     def activities(self):
         ActivitiesMenu().run()
     
-
 
 
 
@@ -84,29 +97,37 @@ class NotesMenu(Menu):
             "3": self.mainMenu,
             "4": self.quit,
         }
+        self.color = "\033[35;1m" # bright magenta
         os.chdir(appDirectories.notes_dir)
-        self.notes = [i for i in os.scandir(appDirectories.notes_dir) if i. is_file()]
-        self.note_id = 0
+        self.notes = [i for i in os.scandir(appDirectories.notes_dir) if i.is_file()]
+        self.note_id = 0 
+
 
     def displayMenu(self):        
-        print("\n")
+        print(self.color, "\n")
         if not self.notes:
             print("You don't have any notes yet")
         else: 
-            print("\nYour notes:\n")
+            print("Your notes:\n")
             for num, note in enumerate(self.notes, 1):
                 print(f'{num}. {note.name}')
-        print("\n")
         super().displayMenu()
 
                  
 
     def addNewNote(self):
-        self.note_id += 1
         name = input("Name your note or press Enter\n")
-        if not name: name = f"Note{self.note_id}"
+        if not name: 
+            for entry in self.notes:
+                if "Note" in entry.name and re.search(r'\d', entry.name):
+                    reg = re.compile("[^0-9]")
+                    last_id = int(reg.sub('', entry.name))
+                    if last_id > self.note_id:
+                        self.note_id = last_id
+            self.note_id += 1
+            name = f"Note{self.note_id}"
         else:
-            import re # To avoid invalid input 
+            # To avoid invalid input 
             reg = re.compile("[^a-zA-Z][^0-9]")
             name = reg.sub('', name)
         tags = input("Add some tags or press enter\n")
@@ -142,6 +163,7 @@ class ReminderMenu(Menu):
             "2": self.setRepeatedReminder,
             "3": self.mainMenu,
         }
+        self.color = "\033[33;1m" # bright yellow
     
     def setSingleReminder(self):
         message = input("Enter the reminder message: ")        
@@ -152,6 +174,8 @@ class ReminderMenu(Menu):
                 time = input("\nSet the time, for example '12:30'\n") 
                 dateObj = datetime.strptime(date+time, '%Y.%m.%d,%H:%M')
                 n = Notification(message=message, when=dateObj)
+
+                from multiprocessing import Process 
                 process = Process(target=n.activate)
                 process.start()
                 done = True
@@ -160,6 +184,7 @@ class ReminderMenu(Menu):
         print("Your reminder was set successfully")
 
     def setRepeatedReminder(self):
+        print('\033[31;42;2m') # red text & green bg
         print("Let's encourage your memory couse there's no such functionality here")
         print("hehe")
 
@@ -172,7 +197,7 @@ class ToDoMenu(Menu):
             "2": self.createToDoList,
             "3": self.mainMenu,
         }
-        
+        self.color = "\033[32;1m" # bright green 
         os.chdir(appDirectories.todos_dir)
 
 
@@ -185,7 +210,7 @@ class ToDoMenu(Menu):
                     f = open(i, "r")
                     print("\n", f.read(), sep="")
                     f.close()
-        else: print("There are no to-dos for today")
+                else: print("\nThere are no to-dos for today")
              
 
     def createToDoList(self):
@@ -195,7 +220,7 @@ class ToDoMenu(Menu):
             ToDo().create()
 
     def displayMenu(self):
-        print('''
+        print(self.color, '''
 1. Show my to-do for today
 2. Create new to-do list
 3. Main Menu
@@ -203,36 +228,19 @@ class ToDoMenu(Menu):
 
 
 ###
-class GoalsMenu(Menu):
-    def __init__(self):
-        self.menuOptions = {
-            "1": self.showMyGoals,
-            "2": self.addNewGoal,
-            "3": self.addAListOfGoals,
-            "4": self.mainMenu,
-        }
-
-    def showMyGoals(self):
-        pass
-    def addNewGoal(self):
-        pass
-    def addAListOfGoals(self):
-        pass
-
-
-###
 class ActivitiesMenu(Menu):
     def __init__(self):
         self.menuOptions = {
             "1": self.addNewActivity,
-
-            "4": self.mainMenu,
-
+            "2": self.mainMenu,
         }
+        self.color = "\033[31;1m" # bright red
+
     def displayMenu(self):
-        print("""\nIn this section you can keep track of your activities\n
-            such as reading or meditation on everyday basis""")
+        print("""\nThere's no point in doing smth like this through the terminal ¯\_(ツ)_/¯""")
         super().displayMenu()
+    def addNewActivity(self):
+        pass
 
     
 
