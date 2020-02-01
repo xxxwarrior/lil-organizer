@@ -11,12 +11,12 @@ class ToDo:
         todoFile = open(f'{self.name}.txt', "w+")
         content = []
 
-        counter = 1
+        index = 1
         while True:
-            strNumber = f"{counter}. "
-            line = input(strNumber)
-            if line: counter += 1
-            else: break
-            content.append(strNumber+line)
+            line = input(f"{index}. ")
+            if line: 
+                content.append(f"{index}. " + line)
+                index += 1
+            else: break     
         todoFile.write("\n".join(content))
         todoFile.close()
