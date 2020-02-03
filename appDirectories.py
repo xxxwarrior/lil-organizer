@@ -13,7 +13,6 @@ root = f"{dir_path}\\RootFolder"
 
 # The paths of all the app folders
 notes_dir = f"{root}\\Notes"
-reminders_dir = f"{root}\\Reminders"
 todos_dir =  f"{root}\\ToDos"
 activities_dir = f"{root}\\Activities"
 
@@ -27,7 +26,6 @@ def run():
     
     try:
         os.mkdir(f"{root}\\Notes")
-        os.mkdir(f"{root}\\Reminders")
         os.mkdir(f"{root}\\ToDos")
         os.mkdir(f"{root}\\Activities")
     except FileExistsError:
