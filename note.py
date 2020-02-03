@@ -19,7 +19,8 @@ class Note:
             line = input()
             if line.lower() == "end": break
             content.append(line)
-        content.append(f"\nTags: {', '.join(self.tags)}")
+        if self.tags:
+            content.append(f"\nTags: {', '.join(self.tags)}")
         note.write("\n".join(content))
         note.close()
 
