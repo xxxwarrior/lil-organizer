@@ -113,10 +113,6 @@ class NotesMenu(Menu):
             for num, note in enumerate(self.notes, 1):
                 print(f'{num}. {note.name}')
         super().displayMenu()
-<<<<<<< HEAD
-
-=======
->>>>>>> 2538030a87b8a5972597e40a7484a050b300a9b3
                  
 
     def addNewNote(self):
@@ -142,11 +138,7 @@ class NotesMenu(Menu):
         except FileExistsError:
             print(f"Note '{name}' already exists")  
             
-<<<<<<< HEAD
     
-=======
-            
->>>>>>> 2538030a87b8a5972597e40a7484a050b300a9b3
     def openNote(self):
         choice = input("\nEnter the note number: ")
         for num, note in enumerate(self.notes, 1):
@@ -273,8 +265,4 @@ class ActivitiesMenu(Menu):
 
 if __name__ == "__main__":
     appDirectories.run()
-<<<<<<< HEAD
     MainMenu().run()
-=======
-    MainMenu().run()
->>>>>>> 2538030a87b8a5972597e40a7484a050b300a9b3
