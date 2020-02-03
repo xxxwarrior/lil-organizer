@@ -105,7 +105,7 @@ class NotesMenu(Menu):
 
 
     def displayMenu(self):        
-        print("\033[30;47;2m")
+        print("\033[30;47;2m") # black text & white bg
         if not self.notes:
             print("You don't have any notes yet")
         else: 
@@ -114,18 +114,6 @@ class NotesMenu(Menu):
                 print(f'{num}. {note.name}')
         super().displayMenu()
 
-    
-    def openNote(self):
-        choice = input("\nEnter the note number: ")
-        for num, note in enumerate(self.notes, 1):
-            if choice == str(num):
-                print("\033[37;1m", f"The note '{note.name}':")
-                f = open(note, "r")
-                print("\n", f.read(), sep="")
-                f.close()
-                print(self.color)
-                break
-            else: pass
                  
 
     def addNewNote(self):
@@ -146,9 +134,23 @@ class NotesMenu(Menu):
         tags = input("Add some tags or press enter\n")
         note = Note(self.note_id, name, tags.split())
         try:
+            print("\033[37;1m") # white text
             note.create()
         except FileExistsError:
             print(f"Note '{name}' already exists")  
+            
+    
+    def openNote(self):
+        choice = input("\nEnter the note number: ")
+        for num, note in enumerate(self.notes, 1):
+            if choice == str(num):
+                print("\033[37;1m", f"The note '{note.name}':")
+                f = open(note, "r")
+                print("\n", f.read(), sep="")
+                f.close()
+                print(self.color)
+                break
+            else: pass
 
 
 
@@ -198,7 +200,7 @@ class ReminderMenu(Menu):
 
     def setRepeatedReminder(self):
         print('\033[31;42;2m') # red text & green bg
-        print("Let's encourage your memory couse there's no such functionality here")
+        print("Let's encourage your memory cause there's no such functionality here")
         print("hehe")
 
 
@@ -217,7 +219,9 @@ class ToDoMenu(Menu):
     def showMyToDo(self):
         date = datetime.today().strftime("%d.%m.%y")
         todos = [i for i in os.listdir(appDirectories.todos_dir)]
-        if todos != []:
+        if todos == []: 
+            print("You don't have any to-dos")
+        else:
             for i in todos:
                 if date in i:
                     f = open(i, "r")
@@ -229,7 +233,7 @@ class ToDoMenu(Menu):
     def createToDoList(self):
         inp = input("""If you already have to-do list for today, 
         this action will rewrite it. Continue? [y/n]\n""")
-        if "y" in inp:
+        if "y" in inp.lower():
             ToDo().create()
 
     def displayMenu(self):
@@ -250,7 +254,7 @@ class ActivitiesMenu(Menu):
         self.color = "\033[31;1m" # bright red
 
     def displayMenu(self):
-        print("""\nThere's no point in doing smth like this through the terminal ¯\_(ツ)_/¯""")
+        print("""\nThis part is on rethinking process ¯\_(ツ)_/¯""")
         super().displayMenu()
     def addNewActivity(self):
         pass
@@ -263,8 +267,3 @@ class ActivitiesMenu(Menu):
 if __name__ == "__main__":
     appDirectories.run()
     MainMenu().run()
-    
-
-
-
-
